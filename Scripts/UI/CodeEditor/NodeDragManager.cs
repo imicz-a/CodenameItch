@@ -64,6 +64,21 @@ public class NodeDragManager : MonoBehaviour
         node = null;
         return false;
     }
+    bool isOverAnotherNode(VariableNode display, out LangNode node)
+    {
+        foreach (RectTransform child in _nodeParent)
+        {
+            if (child == display.transform)
+                continue;
+            if (rectOverlaps((RectTransform)display.transform, child))
+            {
+                node = child.GetComponent<LangNode>();
+                return true;
+            }
+        }
+        node = null;
+        return false;
+    }
     /// <summary>
     /// Snaps b to a
     /// </summary>
@@ -72,6 +87,7 @@ public class NodeDragManager : MonoBehaviour
         var recta = (RectTransform)a.transform;
         var rectb = (RectTransform)b.transform;
         rectb.anchoredPosition = recta.anchoredPosition + new Vector2(0, -recta.rect.height/2 - rectb.rect.height/2);
+        rectb.SetParent(recta);
     }
     bool rectOverlaps(RectTransform rectTrans1, RectTransform rectTrans2)
     {
