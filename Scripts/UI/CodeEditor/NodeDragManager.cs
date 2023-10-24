@@ -89,6 +89,13 @@ public class NodeDragManager : MonoBehaviour
         rectb.anchoredPosition = recta.anchoredPosition + new Vector2(0, -recta.rect.height/2 - rectb.rect.height/2);
         rectb.SetParent(recta);
     }
+    void SnapNodes(VariableNode a, LangNode b)
+    {
+        var recta = (RectTransform)a.transform;
+        var rectb = (RectTransform)b.transform;
+        rectb.anchoredPosition = recta.anchoredPosition + new Vector2(0, -recta.rect.height / 2 - rectb.rect.height / 2);
+        rectb.SetParent(recta);
+    }
     bool rectOverlaps(RectTransform rectTrans1, RectTransform rectTrans2)
     {
         Rect rect1 = new Rect(rectTrans1.anchoredPosition.x, rectTrans1.anchoredPosition.y, rectTrans1.rect.width, rectTrans1.rect.height);
