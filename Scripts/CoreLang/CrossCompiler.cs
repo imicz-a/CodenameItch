@@ -41,20 +41,17 @@ public static class CrossCompiler
     static void FinalizeCompilation()
     {
         File.WriteAllText(Application.dataPath + "/program.py", ccompiledString);
-#if UNITY_EDITOR_OSX
         var python = new Process();
-        python.StartInfo.FileName = "/usr/bin/python3";
+        if(Application.platform == RuntimePlatform.OSXEditor)
+            python.StartInfo.FileName = "/usr/bin/python3";
+        if(Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
+            python.StartInfo.FileName = Application.dataPath + "/pythonInterpreter/win/python.exe";
         python.StartInfo.Arguments = $"\"{Application.dataPath}/program.py\"";
         python.StartInfo.RedirectStandardOutput = true;
         python.StartInfo.UseShellExecute = false;
         python.Start();
         python.WaitForExit();
-        UnityEngine.Debug.Log(python.StandardOutput.ReadToEnd());
-    #endif
-    #if UNITY_EDITOR_WIN
-        var python = Process.Start(Application.dataPath + "/pythonInterpreter/win/python.exe",
-                $"\"{Application.dataPath}/program.py\"");
-    #endif
+        ProgramOutput.instance.Write(python.StandardOutput.ReadToEnd());
     }
     public static void StartCrossCompile()
     {
