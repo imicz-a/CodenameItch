@@ -29,6 +29,21 @@ public class NodeDragManager : MonoBehaviour
             current.position = Input.mousePosition;
         }
     }
+    public void onPutDown(DraggableObject o)
+    {
+        if(o is LangNode)
+        {
+            onPutDown(o as LangNode);
+        }
+        else if(o is VariableNode)
+        {
+            onPutDown(o as VariableNode);
+        }
+        else
+        {
+            throw new System.Exception("this class cannot be put down!");
+        }
+    }
     public void onPutDown(LangNode display)
     {
         LangNode overlappingNode = null;
@@ -43,21 +58,53 @@ public class NodeDragManager : MonoBehaviour
         overlappingNode.nextNode = dnode;
         SnapNodes(overlappingNode, display);
     }
+    public void onPutDown(VariableNode v)
+    {
+        LangNode overlappingNode = null;
+        if (!isOverAnotherNode(v, out overlappingNode))
+        {
+            return;
+        }
+        if(overlappingNode.)
+        var dnode = display.GetComponent<LangNode>();
+        if (overlappingNode.nextNode != null)
+        {
+            dnode.nextNode = overlappingNode.nextNode;
+        }
+        overlappingNode.nextNode = dnode;
+        SnapNodes(overlappingNode, display);
+    }
     /// <summary>
     /// Returns whether or not this node is over another node
     /// </summary>
     /// <param name="display">the display node to check</param>
     /// <param name="node">outputs the intersecting langnode if true and null otherwise</param>
     /// <returns></returns>
-    bool isOverAnotherNode(LangNode display, out LangNode node)
+    bool isOverAnotherNode(DraggableObject display, out LangNode node)
     {
         foreach(RectTransform child in _nodeParent)
         {
-            if (child == display.transform)
-                continue;
-            if (rectOverlaps((RectTransform)display.transform, child))
+            if (searchTransform(child, display.transform as RectTransform, out node))
             {
-                node = child.GetComponent<LangNode>();
+                return true;
+            }
+        }
+        node = null;
+        return false;
+    }
+    bool searchTransform(RectTransform parent, RectTransform searchedfor, out LangNode node)
+    {
+        if (searched == display.transform)
+            continue;
+        if (rectOverlaps(searchedfor, child))
+        {
+            node = child.GetComponent<LangNode>();
+            return true;
+        }
+        foreach (RectTransform child in searched)
+        {
+            if (searchTransform(child, searchedfor, out node))
+            {
                 return true;
             }
         }
