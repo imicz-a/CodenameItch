@@ -9,7 +9,7 @@ using System.Diagnostics;
 /// </summary>
 public static class CrossCompiler
 {
-    static string ccompiledString;
+    public static string ccompiledString;
     static string tabstring;
     public static StartNode entryPoint;
     // Start is called before the first frame update
@@ -19,7 +19,7 @@ public static class CrossCompiler
     /// <param name="line">line to add</param>
     public static void AddLine(string line)
     {
-        ccompiledString += tabstring + line + "\n";
+        ccompiledString += "\n" + tabstring + line;
     }
     public static void AddTab()
     {

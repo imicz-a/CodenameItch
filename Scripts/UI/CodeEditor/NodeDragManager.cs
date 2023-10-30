@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
 
 public class NodeDragManager : MonoBehaviour
@@ -20,6 +21,7 @@ public class NodeDragManager : MonoBehaviour
         instance = this;
     }
     public Transform current;
+    public Vector2 refResolution = new Vector2(1920, 1080);
     // Update is called once per frame
     void Update()
     {
@@ -31,9 +33,9 @@ public class NodeDragManager : MonoBehaviour
     }
     public void onPutDown(DraggableObject o)
     {
-        if(o is LangNode)
+        if(o is InstructionNode)
         {
-            onPutDown(o as LangNode);
+            onPutDown(o as InstructionNode);
         }
         else if(o is VariableNode)
         {
@@ -44,13 +46,13 @@ public class NodeDragManager : MonoBehaviour
             throw new System.Exception("this class cannot be put down!");
         }
     }
-    public void onPutDown(LangNode display)
+    public void onPutDown(InstructionNode display)
     {
-        LangNode overlappingNode = null;
+        InstructionNode overlappingNode;
         if (!isOverAnotherNode(display, out overlappingNode)) {
             return;
         }
-        var dnode = display.GetComponent<LangNode>();
+        var dnode = display.GetComponent<InstructionNode>();
         if (overlappingNode.nextNode != null)
         {
             dnode.nextNode = overlappingNode.nextNode;
@@ -60,31 +62,39 @@ public class NodeDragManager : MonoBehaviour
     }
     public void onPutDown(VariableNode v)
     {
-        LangNode overlappingNode = null;
+        Debug.Log("Putting var down");
+        InstructionNode overlappingNode;
         if (!isOverAnotherNode(v, out overlappingNode))
         {
+            Debug.Log("var is not over another node");
             return;
         }
-        if(overlappingNode.)
-        var dnode = display.GetComponent<LangNode>();
-        if (overlappingNode.nextNode != null)
+        Debug.Log("Var is over another node");
+        if (!overlappingNode.hasVariable)
         {
-            dnode.nextNode = overlappingNode.nextNode;
+            Debug.Log("Node does not have variable");
+            return;
         }
-        overlappingNode.nextNode = dnode;
-        SnapNodes(overlappingNode, display);
+        Debug.Log("inserting node");
+        overlappingNode.insertVariable(v, localPointerPos);
     }
     /// <summary>
     /// Returns whether or not this node is over another node
     /// </summary>
-    /// <param name="display">the display node to check</param>
-    /// <param name="node">outputs the intersecting langnode if true and null otherwise</param>
+    /// <param name="d">the draggable object to check</param>
+    /// <param name="node">outputs the intersecting instructionnode if true and null otherwise</param>
     /// <returns></returns>
-    bool isOverAnotherNode(DraggableObject display, out LangNode node)
+    bool isOverAnotherNode(DraggableObject d, out InstructionNode node)
     {
+        SetPointer();
         foreach(RectTransform child in _nodeParent)
         {
-            if (searchTransform(child, display.transform as RectTransform, out node))
+            InstructionNode capturedNode;
+            if(!child.TryGetComponent(out capturedNode))
+            {
+                continue;
+            }
+            if (searchTransform(capturedNode, d.transform as RectTransform, out node))
             {
                 return true;
             }
@@ -92,63 +102,86 @@ public class NodeDragManager : MonoBehaviour
         node = null;
         return false;
     }
-    bool searchTransform(RectTransform parent, RectTransform searchedfor, out LangNode node)
+    bool searchTransform(InstructionNode check, RectTransform dobject, out InstructionNode node)
     {
-        if (searched == display.transform)
-            continue;
-        if (rectOverlaps(searchedfor, child))
+        if (check.transform as RectTransform == dobject)
         {
-            node = child.GetComponent<LangNode>();
+            goto childsearch;
+        }
+        if (pointerOverlaps(check.transform as RectTransform))
+        {
+            node = check.GetComponent<InstructionNode>();
             return true;
         }
-        foreach (RectTransform child in searched)
+    childsearch:
+        if (check.nextNode == null)
+            goto end;
+        if (searchTransform(check.nextNode, dobject, out node))
         {
-            if (searchTransform(child, searchedfor, out node))
-            {
-                return true;
-            }
+            return true;
         }
-        node = null;
-        return false;
-    }
-    bool isOverAnotherNode(VariableNode display, out LangNode node)
-    {
-        foreach (RectTransform child in _nodeParent)
-        {
-            if (child == display.transform)
-                continue;
-            if (rectOverlaps((RectTransform)display.transform, child))
-            {
-                node = child.GetComponent<LangNode>();
-                return true;
-            }
-        }
+    end:
         node = null;
         return false;
     }
     /// <summary>
     /// Snaps b to a
     /// </summary>
-    void SnapNodes(LangNode a, LangNode b)
+    void SnapNodes(InstructionNode a, InstructionNode b)
     {
+        Debug.Log($"Snapping {b.gameObject.name} to {a.gameObject.name}");
         var recta = (RectTransform)a.transform;
         var rectb = (RectTransform)b.transform;
-        rectb.anchoredPosition = recta.anchoredPosition + new Vector2(0, -recta.rect.height/2 - rectb.rect.height/2);
         rectb.SetParent(recta);
-    }
-    void SnapNodes(VariableNode a, LangNode b)
-    {
-        var recta = (RectTransform)a.transform;
-        var rectb = (RectTransform)b.transform;
-        rectb.anchoredPosition = recta.anchoredPosition + new Vector2(0, -recta.rect.height / 2 - rectb.rect.height / 2);
-        rectb.SetParent(recta);
-    }
-    bool rectOverlaps(RectTransform rectTrans1, RectTransform rectTrans2)
-    {
-        Rect rect1 = new Rect(rectTrans1.anchoredPosition.x, rectTrans1.anchoredPosition.y, rectTrans1.rect.width, rectTrans1.rect.height);
-        Rect rect2 = new Rect(rectTrans2.anchoredPosition.x, rectTrans2.anchoredPosition.y, rectTrans2.rect.width, rectTrans2.rect.height);
-
-        return rect1.Overlaps(rect2);
+        rectb.anchoredPosition = new Vector2(recta.rect.width/2,
+            -rectb.rect.height/2);
+        
     }
 
+    [SerializeField] RectTransform tempPointerChecker;
+    [SerializeField] RectTransform currentCanvas;
+    Vector2 localPointerPos;
+    void SetPointer()
+    {
+        Vector2 guiScale = getUIScale();
+        Vector2 debog = Input.mousePosition * guiScale;
+        tempPointerChecker.anchoredPosition = debog;
+        tempPointerChecker.SetParent(_nodeParent);
+        localPointerPos = tempPointerChecker.anchoredPosition;
+        tempPointerChecker.SetParent(currentCanvas);
+    }
+    public bool pointerOverlaps(RectTransform rectTrans)
+    {
+        Transform parent = rectTrans.parent;
+        rectTrans.SetParent(_nodeParent);
+        
+        Rect rect2 = new Rect(rectTrans.anchoredPosition.x-(rectTrans.rect.width/2),
+            rectTrans.anchoredPosition.y-(rectTrans.rect.height/2),
+            rectTrans.rect.width, rectTrans.rect.height);
+        bool debug = rect2.Contains(localPointerPos);
+        rectTrans.SetParent(parent);
+        return debug;
+    }
+    public bool pointerOverlaps(RectTransform rectTrans, InstructionArgument arg)
+    {
+        Transform parent = rectTrans.parent;
+        rectTrans.SetParent(_nodeParent);
+        var lay = arg.GetComponent<UnityEngine.UI.LayoutElement>();
+        lay.ignoreLayout = true;
+        Vector3 pos = rectTrans.position;
+        rectTrans.anchorMin = Vector2.zero;
+        rectTrans.anchorMax = Vector2.zero;
+        rectTrans.position = pos;
+        Rect rect2 = new Rect(rectTrans.anchoredPosition.x - (rectTrans.rect.width / 2),
+            rectTrans.anchoredPosition.y - (rectTrans.rect.height / 2),
+            rectTrans.rect.width, rectTrans.rect.height);
+        bool debug = rect2.Contains(localPointerPos);
+        lay.ignoreLayout = false;
+        rectTrans.SetParent(parent);
+        return debug;
+    }
+    Vector2 getUIScale()
+    {
+        return refResolution/new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight);
+    }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartNode : LangNode
+public class StartNode : InstructionNode
 {
     public override void CrossCompile()
     {
