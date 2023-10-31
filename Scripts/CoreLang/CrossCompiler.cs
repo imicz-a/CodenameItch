@@ -5,13 +5,14 @@ using System.IO;
 using System.Diagnostics;
 
 /// <summary>
-/// Class for converting node to python code
+/// Class for converting nodes to python code
 /// </summary>
 public static class CrossCompiler
 {
     public static string ccompiledString;
     static string tabstring;
     public static StartNode entryPoint;
+    static List<VariableNode> varNodes;
     // Start is called before the first frame update
     /// <summary>
     /// adds a line to cross compiled code
@@ -28,6 +29,10 @@ public static class CrossCompiler
     public static void RemoveTab()
     {
         tabstring.Remove(tabstring.Length - 1, 1);
+    }
+    public static void AddVar(VariableNode node)
+    {
+
     }
     public static void CompileNext(LangNode next)
     {
@@ -55,6 +60,10 @@ public static class CrossCompiler
     }
     public static void StartCrossCompile()
     {
+        foreach(var v in varNodes)
+        {
+            AddLine($"{v.name} = None");
+        }
         entryPoint.nextNode.CrossCompile();
     }
 }

@@ -11,6 +11,13 @@ public class textArgument : InstructionArgument
         base.recieveArgument(node);
         input.gameObject.SetActive(false);
     }
+    public override void derecieveArgument()
+    {
+        base.derecieveArgument();
+        input.gameObject.SetActive(true);
+        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150);
+        
+    }
     public override void CrossCompile()
     {
         if (isAssigned)

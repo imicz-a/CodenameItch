@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class VariableNode : LangNode
 {
-    
-}
-public enum VariableType
-{
-    boolean,
-    number,
-    text
+    InstructionArgument assignedArgument;
+    public override void Grab()
+    {
+        base.Grab();
+        if(assignedArgument != null)
+        {
+            assignedArgument.derecieveArgument();
+            assignedArgument = null;
+        }
+    }
 }
