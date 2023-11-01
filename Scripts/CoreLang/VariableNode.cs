@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VariableNode : LangNode
 {
-    InstructionArgument assignedArgument;
+    public InstructionArgument assignedArgument;
     public override void Grab()
     {
         base.Grab();

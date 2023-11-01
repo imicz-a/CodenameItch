@@ -49,15 +49,16 @@ public class NodeDragManager : MonoBehaviour
     public void onPutDown(InstructionNode display)
     {
         InstructionNode overlappingNode;
-        if (!isOverAnotherNode(display, out overlappingNode)) {
+        if (!isOverAnotherNode(display, out overlappingNode))
+        {
             return;
         }
-        var dnode = display.GetComponent<InstructionNode>();
         if (overlappingNode.nextNode != null)
         {
-            dnode.nextNode = overlappingNode.nextNode;
+            display.nextNode = overlappingNode.nextNode;
         }
-        overlappingNode.nextNode = dnode;
+        display.previousNode = overlappingNode;
+        overlappingNode.nextNode = display;
         SnapNodes(overlappingNode, display);
     }
     public void onPutDown(VariableNode v)
@@ -102,6 +103,46 @@ public class NodeDragManager : MonoBehaviour
         node = null;
         return false;
     }
+    bool isOverAnotherNodeIncludingVars(DraggableObject d, out LangNode node)
+    {
+        SetPointer();
+        foreach (RectTransform child in _nodeParent)
+        {
+            InstructionNode capturedNode;
+            if (!child.TryGetComponent(out capturedNode))
+            {
+                continue;
+            }
+            if (searchTransformIncludingVars(capturedNode, d.transform as RectTransform, out node))
+            {
+                return true;
+            }
+        }
+        node = null;
+        return false;
+    }
+    bool searchTransformIncludingVars(InstructionNode check, RectTransform dobject, out LangNode node)
+    {
+        if (check.transform as RectTransform == dobject)
+        {
+            goto childsearch;
+        }
+        if (pointerOverlaps(check.transform as RectTransform))
+        {
+            node = check.GetComponent<InstructionNode>();
+            return true;
+        }
+    childsearch:
+        if (check.nextNode == null)
+            goto end;
+        if (searchTransform(check.nextNode, dobject, out node))
+        {
+            return true;
+        }
+    end:
+        node = null;
+        return false;
+    }
     bool searchTransform(InstructionNode check, RectTransform dobject, out InstructionNode node)
     {
         if (check.transform as RectTransform == dobject)
@@ -127,7 +168,7 @@ public class NodeDragManager : MonoBehaviour
     /// <summary>
     /// Snaps b to a
     /// </summary>
-    void SnapNodes(InstructionNode a, InstructionNode b)
+    public void SnapNodes(InstructionNode a, InstructionNode b)
     {
         Debug.Log($"Snapping {b.gameObject.name} to {a.gameObject.name}");
         var recta = (RectTransform)a.transform;

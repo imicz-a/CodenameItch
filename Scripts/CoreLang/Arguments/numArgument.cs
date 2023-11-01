@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class textArgument : InstructionArgument
+public class numArgument : InstructionArgument
 {
     public TMPro.TMP_InputField input;
-    public LayoutElement inputelem;
     public override void recieveArgument(VariableNode node)
     {
         base.recieveArgument(node);
@@ -29,7 +28,16 @@ public class textArgument : InstructionArgument
         }
         else
         {
-            CrossCompiler.ccompiledString += $"\"{input.text}\"";
+            CrossCompiler.ccompiledString += input.text;
+        }
+    }
+    public void onEndEdit()
+    {
+        if (!decimal.TryParse(input.text, out _))
+        {
+            WarningUI.instance.DisplayWarning("This should be a number",
+                "The text inside this box must be a number");
+            input.text = string.Empty;
         }
     }
 }

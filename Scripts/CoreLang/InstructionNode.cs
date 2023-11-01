@@ -5,4 +5,12 @@ using UnityEngine.UI;
 public class InstructionNode : LangNode
 {
     public InstructionNode nextNode;
+    public InstructionNode previousNode;
+    public void ReSnap()
+    {
+        if(previousNode != null)
+            NodeDragManager.instance.SnapNodes(previousNode, this);
+        if (nextNode != null)
+            nextNode.ReSnap();
+    }
 }

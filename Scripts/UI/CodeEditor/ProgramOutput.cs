@@ -52,26 +52,9 @@ public class ProgramOutput : MonoBehaviour
     }
     public void Write(string s)
     {
-        uint lines, maxl;
-        countLinesAndMaxLineLen(s, out lines, out maxl);
-        scrollContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, maxl*20);
-        scrollContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, lines * 40);
         text.text = s;
-    }
-    void countLinesAndMaxLineLen(string s, out uint lines, out uint maxl)
-    {
-        uint currentnum = 0;
-        lines = 0;
-        maxl = 0;
-        foreach(char c in s)
-        {
-            if(c == '\n')
-            {
-                if (currentnum > maxl) maxl = currentnum;
-                lines++;
-                continue;
-            }
-            currentnum++;
-        }
+        scrollContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, text.preferredWidth);
+        scrollContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, text.preferredHeight);
+        return;
     }
 }

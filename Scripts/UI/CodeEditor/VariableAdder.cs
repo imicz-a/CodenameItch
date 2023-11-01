@@ -15,5 +15,6 @@ public class VariableAdder : MonoBehaviour
         varParent.anchoredPosition = new Vector2(0, numofvars * 20);
         varParentContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100 + numofvars * 40);
         var clone = Instantiate(template, varParent);
+        CrossCompiler.AddVar(clone.GetComponent<TrueVarNode>());
     }
 }

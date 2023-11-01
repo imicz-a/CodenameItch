@@ -11,12 +11,21 @@ public class TrueVarNode : VariableNode
     }
     public void onEndEdit(string s)
     {
+        if (s == string.Empty)
+            return;
         name = s;
         namefield.interactable = false;
-        namefield.image.raycastTarget = false;
         RecalculateSize();
+        var par = namefield.transform.GetChild(0);
+        foreach(Transform child in par)
+        {
+            if(child.gameObject.name == "Caret")
+            {
+                Destroy(child.gameObject);
+            }
+        }
     }
-    void RecalculateSize()
+    new void RecalculateSize()
     {
         float sum = namefield.preferredWidth + 20;
         (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, sum);

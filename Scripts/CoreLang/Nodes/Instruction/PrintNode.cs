@@ -8,9 +8,9 @@ public class PrintNode : InstructionNode
 
     public override void CrossCompile()
     {
-        CrossCompiler.AddLine("print(\"");
+        CrossCompiler.AddLine("print(");
         arguments[0].CrossCompile();
-        CrossCompiler.ccompiledString += "\")";
+        CrossCompiler.ccompiledString += ")";
         CrossCompiler.CompileNext(nextNode);
     }
 }

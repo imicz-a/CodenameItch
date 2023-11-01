@@ -14,6 +14,7 @@ public class DraggableObject : MonoBehaviour, IDragHandler, IBeginDragHandler, I
             clone.transform.SetParent(transform.parent, false);
             clone.transform.position = transform.position;
             clone.name = name;
+            clone.transform.SetAsLastSibling();
             (transform as RectTransform).anchorMax = Vector2.zero;
             (transform as RectTransform).anchorMin = Vector2.zero;
             isClonable = false;
