@@ -53,19 +53,26 @@ public class NodeDragManager : MonoBehaviour
         {
             return;
         }
+        bool wasInserted = false;
         if (overlappingNode.nextNode != null)
         {
+            overlappingNode.nextNode.previousNode = display;
             display.nextNode = overlappingNode.nextNode;
+            wasInserted = true;
         }
         display.previousNode = overlappingNode;
         overlappingNode.nextNode = display;
         SnapNodes(overlappingNode, display);
+        if (wasInserted)
+        {
+            SnapNodes(display, display.nextNode);
+        }
     }
     public void onPutDown(VariableNode v)
     {
         Debug.Log("Putting var down");
-        InstructionNode overlappingNode;
-        if (!isOverAnotherNode(v, out overlappingNode))
+        LangNode overlappingNode;
+        if (!isOverAnotherNodeIncludingVars(v, out overlappingNode))
         {
             Debug.Log("var is not over another node");
             return;
@@ -108,7 +115,7 @@ public class NodeDragManager : MonoBehaviour
         SetPointer();
         foreach (RectTransform child in _nodeParent)
         {
-            InstructionNode capturedNode;
+            LangNode capturedNode;
             if (!child.TryGetComponent(out capturedNode))
             {
                 continue;
@@ -121,7 +128,7 @@ public class NodeDragManager : MonoBehaviour
         node = null;
         return false;
     }
-    bool searchTransformIncludingVars(InstructionNode check, RectTransform dobject, out LangNode node)
+    bool searchTransformIncludingVars(LangNode check, RectTransform dobject, out LangNode node)
     {
         if (check.transform as RectTransform == dobject)
         {
@@ -129,15 +136,31 @@ public class NodeDragManager : MonoBehaviour
         }
         if (pointerOverlaps(check.transform as RectTransform))
         {
-            node = check.GetComponent<InstructionNode>();
+            InstructionArgument argument;
+            if (check.doArgsOverlap(out argument))
+            {
+                if (argument.isAssigned)
+                {
+                    if(searchTransformIncludingVars(argument.assignedVar, dobject, out node))
+                    {
+                        return true;
+                    }
+                    
+                }
+            }
+            node = check.GetComponent<LangNode>();
             return true;
         }
     childsearch:
-        if (check.nextNode == null)
-            goto end;
-        if (searchTransform(check.nextNode, dobject, out node))
+        if (check is InstructionNode)
         {
-            return true;
+            var ins = check as InstructionNode;
+            if (ins.nextNode == null)
+                goto end;
+            if (searchTransformIncludingVars(ins.nextNode, dobject, out node))
+            {
+                return true;
+            }
         }
     end:
         node = null;
@@ -194,6 +217,7 @@ public class NodeDragManager : MonoBehaviour
     public bool pointerOverlaps(RectTransform rectTrans)
     {
         Transform parent = rectTrans.parent;
+        int chindex = rectTrans.GetSiblingIndex();
         rectTrans.SetParent(_nodeParent);
         
         Rect rect2 = new Rect(rectTrans.anchoredPosition.x-(rectTrans.rect.width/2),
@@ -201,11 +225,13 @@ public class NodeDragManager : MonoBehaviour
             rectTrans.rect.width, rectTrans.rect.height);
         bool debug = rect2.Contains(localPointerPos);
         rectTrans.SetParent(parent);
+        rectTrans.SetSiblingIndex(chindex);
         return debug;
     }
     public bool pointerOverlaps(RectTransform rectTrans, InstructionArgument arg)
     {
         Transform parent = rectTrans.parent;
+        int chindex = rectTrans.GetSiblingIndex();
         rectTrans.SetParent(_nodeParent);
         var lay = arg.GetComponent<UnityEngine.UI.LayoutElement>();
         lay.ignoreLayout = true;
@@ -219,6 +245,7 @@ public class NodeDragManager : MonoBehaviour
         bool debug = rect2.Contains(localPointerPos);
         lay.ignoreLayout = false;
         rectTrans.SetParent(parent);
+        rectTrans.SetSiblingIndex(chindex);
         return debug;
     }
     Vector2 getUIScale()

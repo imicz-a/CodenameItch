@@ -1,3 +1,3 @@
 
-index = None
-print(index)
+print("hello, ")
+print("world")

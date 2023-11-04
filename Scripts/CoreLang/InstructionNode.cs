@@ -13,4 +13,18 @@ public class InstructionNode : LangNode
         if (nextNode != null)
             nextNode.ReSnap();
     }
+    public override void Grab()
+    {
+        base.Grab();
+        if (previousNode != null)
+        {
+            Orphan();
+        }
+    }
+    public void Orphan()
+    {
+        previousNode.nextNode = null;
+        transform.SetParent(NodeDragManager.nodeParent);
+        previousNode = null;
+    }
 }

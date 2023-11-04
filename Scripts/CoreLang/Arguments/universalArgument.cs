@@ -24,6 +24,25 @@ public class universalArgument : InstructionArgument
             }
         }
     }
+    public returnType returnReturnType()
+    {
+        base.CrossCompile();
+        if (isAssigned)
+        {
+            return assignedVar.rtype;
+        }
+        else
+        {
+            if (decimal.TryParse(input.text, out _))
+            {
+                return returnType.num;
+            }
+            else
+            {
+                return returnType.text;
+            }
+        }
+    }
     public override void recieveArgument(VariableNode node)
     {
         base.recieveArgument(node);
@@ -33,7 +52,6 @@ public class universalArgument : InstructionArgument
     {
         input.gameObject.SetActive(true);
         //inputelem.ignoreLayout = false;
-        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150);
         base.derecieveArgument();
     }
 }

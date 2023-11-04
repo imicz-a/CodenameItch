@@ -8,6 +8,7 @@ public class WarningUI : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        gameObject.SetActive(false);
     }
 
     public TMPro.TMP_Text warningContents;

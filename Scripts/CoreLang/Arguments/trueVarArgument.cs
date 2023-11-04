@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class textArgument : InstructionArgument
+public class trueVarArgument : InstructionArgument
 {
-    public TMPro.TMP_InputField input;
-    public LayoutElement inputelem;
+    [SerializeField] GameObject varField;
     public override void recieveArgument(VariableNode node)
     {
         base.recieveArgument(node);
-        input.gameObject.SetActive(false);
+        varField.SetActive(false);
         //inputelem.ignoreLayout = true;
     }
     public override void derecieveArgument()
     {
-        input.gameObject.SetActive(true);
+        varField.SetActive(true);
         //inputelem.ignoreLayout = false;
         base.derecieveArgument();
 
@@ -28,7 +27,7 @@ public class textArgument : InstructionArgument
         }
         else
         {
-            CrossCompiler.ccompiledString += $"\"{input.text}\"";
+            WarningUI.instance.DisplayWarning("Variable not assigned", "A set instruction requires a variable assigned");
         }
     }
 }

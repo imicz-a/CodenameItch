@@ -27,18 +27,18 @@ public class LangNode : DraggableObject
         }
         RecalculateSize();
     }
-    public void doArgsOverlap(Vector2 localPointer)
+    public bool doArgsOverlap(out InstructionArgument argument)
     {
         foreach (var arg in arguments)
         {
             if (NodeDragManager.instance.pointerOverlaps(arg.transform as RectTransform, arg))
             {
-                
-                Debug.Log("found an arg!");
-                break;
+                argument = arg;
+                return true;
             }
-            Debug.Log("Still looking for overlapping arg");
         }
+        argument = null;
+        return false;
     }
     public void RecalculateSize()
     {
@@ -57,7 +57,16 @@ public class LangNode : DraggableObject
         }
         sum += hlaygroup.padding.right + hlaygroup.padding.left;
         (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, sum);
-        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, maxHeight+20);
+        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, maxHeight+hlaygroup.padding.top+hlaygroup.padding.bottom);
+        if (this is VariableNode)
+        {
+            var varnode = this as VariableNode;
+            if(varnode.assignedArgument != null)
+            {
+                varnode.assignedArgument.RecalculateSize();
+                varnode.assignedArgument.parentNode.RecalculateSize();
+            }
+        }
         if (this is InstructionNode)
         {
             (this as InstructionNode).ReSnap();

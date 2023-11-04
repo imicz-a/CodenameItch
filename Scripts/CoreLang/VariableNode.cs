@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class VariableNode : LangNode
 {
+    public returnType rtype;
     public InstructionArgument assignedArgument;
     public override void Grab()
     {
@@ -14,4 +15,12 @@ public class VariableNode : LangNode
             assignedArgument = null;
         }
     }
+}
+public enum returnType
+{
+    text,
+    num,
+    boolean,
+    noidea,
+    notApplicable,
 }

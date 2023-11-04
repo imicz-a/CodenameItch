@@ -14,7 +14,7 @@ public class TrueVarNode : VariableNode
         if (s == string.Empty)
             return;
         name = s;
-        namefield.interactable = false;
+        Destroy(namefield);
         RecalculateSize();
         var par = namefield.transform.GetChild(0);
         foreach(Transform child in par)

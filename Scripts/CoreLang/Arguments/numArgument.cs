@@ -16,7 +16,6 @@ public class numArgument : InstructionArgument
     {
         input.gameObject.SetActive(true);
         //inputelem.ignoreLayout = false;
-        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150);
         base.derecieveArgument();
 
     }
@@ -33,6 +32,8 @@ public class numArgument : InstructionArgument
     }
     public void onEndEdit()
     {
+        if (input.text == string.Empty)
+            return;
         if (!decimal.TryParse(input.text, out _))
         {
             WarningUI.instance.DisplayWarning("This should be a number",

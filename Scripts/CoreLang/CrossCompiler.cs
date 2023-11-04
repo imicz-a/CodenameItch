@@ -60,6 +60,7 @@ public static class CrossCompiler
             python.StartInfo.FileName = Application.dataPath + "/pythonInterpreter/win/python.exe";
         python.StartInfo.Arguments = $"\"{Application.dataPath}/program.py\"";
         python.StartInfo.RedirectStandardOutput = true;
+        python.StartInfo.RedirectStandardError = true;
         python.StartInfo.UseShellExecute = false;
         python.EnableRaisingEvents = true;
         python.Exited += new System.EventHandler(OnPythonExit);
