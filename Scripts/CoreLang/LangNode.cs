@@ -4,6 +4,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 [RequireComponent(typeof(LayoutElement))]
 [RequireComponent(typeof(RectTransform))]
 public class LangNode : DraggableObject
@@ -44,20 +45,7 @@ public class LangNode : DraggableObject
     {
         if (hlaygroup == null)
             return;
-        float sum = 0;
-        float maxHeight = 0;
-        foreach (RectTransform c in transform)
-        {
-            sum += c.rect.width;
-            sum += hlaygroup.spacing;
-            if(c.rect.height > maxHeight)
-            {
-                maxHeight = c.rect.height;
-            }
-        }
-        sum += hlaygroup.padding.right + hlaygroup.padding.left;
-        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, sum);
-        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, maxHeight+hlaygroup.padding.top+hlaygroup.padding.bottom);
+        RecalculateSizeOnly();
         if (this is VariableNode)
         {
             var varnode = this as VariableNode;
@@ -72,8 +60,47 @@ public class LangNode : DraggableObject
             (this as InstructionNode).ReSnap();
         }
     }
+    public void RecalculateSizeOnly()
+    {
+        
+        float sum = 0;
+        float maxHeight = 0;
+        InstructionNode ins = null;
+        if (this is InstructionNode)
+        {
+            ins = this as InstructionNode;
+        }
+        foreach (RectTransform c in transform)
+        {
+            if(ins != null)
+            {
+                if (ins.nextNode != null)
+                {
+                    if (c == ins.nextNode.transform)
+                    {
+                        continue;
+                    }
+                }
+            }
+            sum += c.rect.width;
+            sum += hlaygroup.spacing;
+            if (c.rect.height > maxHeight)
+            {
+                maxHeight = c.rect.height;
+            }
+        }
+        sum += hlaygroup.padding.right + hlaygroup.padding.left;
+        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, sum);
+        (transform as RectTransform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, maxHeight + hlaygroup.padding.top + hlaygroup.padding.bottom);
+    }
+    [ContextMenu("calculate size")]
+    public void RecalculateSizeEditor()
+    {
+        if (hlaygroup == null)
+            return;
+        RecalculateSizeOnly();
+    }
     public virtual void Init() { }
     public virtual void CrossCompile()
         { throw new System.NotImplementedException("this should be implemented!"); }
-    
 }

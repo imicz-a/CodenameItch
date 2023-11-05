@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Diagnostics;
-
 /// <summary>
 /// Class for converting nodes to python code
 /// </summary>
 public static class CrossCompiler
 {
     public static string ccompiledString;
-    static string tabstring;
+    static string tabstring = string.Empty;
     public static StartNode entryPoint;
     static List<TrueVarNode> varNodes = new();
     static Process python;
@@ -29,7 +28,7 @@ public static class CrossCompiler
     }
     public static void RemoveTab()
     {
-        tabstring.Remove(tabstring.Length - 1, 1);
+        tabstring = tabstring.Remove(tabstring.Length - 1);
     }
     public static void AddVar(TrueVarNode node)
     {
@@ -46,6 +45,7 @@ public static class CrossCompiler
     }
     static void FinalizeCompilation()
     {
+        tabstring = string.Empty;
         UnityEngine.Debug.Log("Finalizing compilation");
         if (python != null)
         {

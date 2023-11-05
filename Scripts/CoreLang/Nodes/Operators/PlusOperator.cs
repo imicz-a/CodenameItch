@@ -13,21 +13,25 @@ public class PlusOperator : VariableNode
         {
             CrossCompiler.ccompiledString += "str(";
             arguments[0].CrossCompile();
-            CrossCompiler.ccompiledString += ") + ";
+            CrossCompiler.ccompiledString += ") + (";
             arguments[1].CrossCompile();
+            CrossCompiler.ccompiledString += ")";
         }
         else if (first != returnType.num && second == returnType.num)
         {
             arguments[0].CrossCompile();
             CrossCompiler.ccompiledString += " + str(";
+            CrossCompiler.ccompiledString += ") + (";
             arguments[1].CrossCompile();
             CrossCompiler.ccompiledString += ")";
         }
         else
         {
+            CrossCompiler.ccompiledString += "(";
             arguments[0].CrossCompile();
-            CrossCompiler.ccompiledString += " + ";
+            CrossCompiler.ccompiledString += ") + (";
             arguments[1].CrossCompile();
+            CrossCompiler.ccompiledString += ")";
         }
     }
 }

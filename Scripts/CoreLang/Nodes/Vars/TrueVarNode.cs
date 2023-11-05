@@ -13,6 +13,11 @@ public class TrueVarNode : VariableNode
     {
         if (s == string.Empty)
             return;
+        if(s == "file" || s == "_")
+        {
+            namefield.text = string.Empty;
+            return;
+        }
         name = s;
         Destroy(namefield);
         RecalculateSize();

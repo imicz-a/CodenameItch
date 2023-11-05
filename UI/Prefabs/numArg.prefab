@@ -213,7 +213,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 7
+  m_PixelsPerUnitMultiplier: 8
 --- !u!114 &779752329737456405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,7 +411,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter text...
+  m_text: Enter number...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1166808a1050944efab9bfbdeeb16b62, type: 2}
   m_sharedMaterial: {fileID: 8504381610495314745, guid: 1166808a1050944efab9bfbdeeb16b62, type: 2}

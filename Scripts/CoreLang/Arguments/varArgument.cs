@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class trueVarArgument : InstructionArgument
+public class varArgument : InstructionArgument
 {
     [SerializeField] GameObject varField;
     public override void recieveArgument(VariableNode node)
@@ -23,14 +23,11 @@ public class trueVarArgument : InstructionArgument
     {
         if (isAssigned)
         {
-            if(assignedVar is TrueVarNode)
-                assignedVar.CrossCompile();
-            else
-                WarningUI.instance.DisplayWarning("Variable not assigned", "A set instruction requires a variable assigned");
+            assignedVar.CrossCompile();
         }
         else
         {
-            WarningUI.instance.DisplayWarning("Variable not assigned", "A set instruction requires a variable assigned");
+            WarningUI.instance.DisplayWarning("Condition not assigned", "Instructions like while, repeat and if require a condition");
         }
     }
 }
