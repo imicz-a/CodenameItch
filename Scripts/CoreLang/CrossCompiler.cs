@@ -63,6 +63,7 @@ public static class CrossCompiler
         python.StartInfo.RedirectStandardError = true;
         python.StartInfo.UseShellExecute = false;
         python.EnableRaisingEvents = true;
+        python.StartInfo.CreateNoWindow = true;
         python.Exited += new System.EventHandler(OnPythonExit);
         UnityEngine.Debug.Log("Python setup complete");
         python.Start();
