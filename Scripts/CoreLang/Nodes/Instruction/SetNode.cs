@@ -7,6 +7,7 @@ public class SetNode : InstructionNode
     public TMPro.TMP_Dropdown typeTropdown;
     public override void CrossCompile()
     {
+        CrossCompiler.AddLine(string.Empty);
         arguments[0].CrossCompile();
         CrossCompiler.ccompiledString += " = ";
         switch (typeTropdown.value)

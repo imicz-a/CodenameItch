@@ -14,4 +14,10 @@ public class ContainerNode : InstructionNode
         }
         CrossCompiler.CompileNext(nextNode);
     }
+    public virtual void InsertAtEnd(InstructionNode node, InstructionNode end)
+    {
+        node.previousNode = end.previousNode;
+        node.previousNode.nextNode = node;
+        NodeDragManager.instance.SnapNodes(this, node);
+    }
 }

@@ -6,6 +6,7 @@ public class InstructionNode : LangNode
 {
     public InstructionNode nextNode;
     public InstructionNode previousNode;
+    public ContainerNode currentContainer = null;
     public void ReSnap()
     {
         if(previousNode != null)
@@ -23,8 +24,32 @@ public class InstructionNode : LangNode
     }
     public void Orphan()
     {
+        if (currentContainer != null)
+        {
+            Debug.Log("container not null");
+            if (!(currentContainer is IfNode))
+            {
+                currentContainer.end.Orphan();
+                currentContainer.InsertAtEnd(currentContainer.end, this);
+                transform.SetParent(NodeDragManager.nodeParent);
+                previousNode = null;
+                currentContainer = null;
+                return;
+            }
+            else
+            {
+                (currentContainer as IfNode).enode.Orphan();
+                currentContainer.InsertAtEnd((currentContainer as IfNode).enode, this);
+                transform.SetParent(NodeDragManager.nodeParent);
+                previousNode = null;
+                currentContainer = null;
+                return;
+
+            }
+        }
         previousNode.nextNode = null;
         transform.SetParent(NodeDragManager.nodeParent);
         previousNode = null;
+        currentContainer = null;
     }
 }

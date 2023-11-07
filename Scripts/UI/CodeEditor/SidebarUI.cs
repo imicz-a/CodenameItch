@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 public class SidebarUI : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
 {
     RectTransform rtransform;
-    [SerializeField] float speedMultiplier = 300;
-    [SerializeField] float fadespeed = 5f;
+    [SerializeField] float speedMultiplier = 100;
+    [SerializeField] decimal fadespeed = 12;
     [SerializeField] GameObject children;
     [SerializeField] CanvasGroup childrenCGroup;
     // Start is called before the first frame update
@@ -23,13 +23,14 @@ public class SidebarUI : MonoBehaviour, IPointerExitHandler, IPointerEnterHandle
     }
     IEnumerator OpenEnumerator()
     {
-        while (rtransform.anchoredPosition.x < 250)
+        while (rtransform.anchoredPosition.x < 110)
         {
             rtransform.anchoredPosition += new Vector2(speedMultiplier * Time.deltaTime, 0);
-            childrenCGroup.alpha += fadespeed * Time.deltaTime;
+            childrenCGroup.alpha += (float)fadespeed * Time.deltaTime;
+            Debug.Log(childrenCGroup.alpha);
             yield return null;
         }
-        rtransform.anchoredPosition = new Vector2(250, -25);
+        rtransform.anchoredPosition = new Vector2(110, -25);
         childrenCGroup.alpha = 1;
     }
     void Close()
@@ -39,13 +40,15 @@ public class SidebarUI : MonoBehaviour, IPointerExitHandler, IPointerEnterHandle
     }
     IEnumerator CloseEnumerator()
     {
-        while (rtransform.anchoredPosition.x > -150)
+        yield return new WaitForSeconds(.25f);
+        while (rtransform.anchoredPosition.x > -290)
         {
             rtransform.anchoredPosition -= new Vector2(speedMultiplier * Time.deltaTime, 0);
-            childrenCGroup.alpha -= fadespeed * Time.deltaTime;
+            childrenCGroup.alpha -= (float)fadespeed * Time.deltaTime;
             yield return null;
         }
-        rtransform.anchoredPosition = new Vector2(-150, -25);
+        rtransform.anchoredPosition = new Vector2(-290, -25);
+        childrenCGroup.alpha = 0;
     }
     public void OnPointerEnter(PointerEventData eventData) {
         Debug.Log("enter");

@@ -1,7 +1,12 @@
 
-sst = None
-with open("text.txt", 'w') as file:
-	file.write("test")
-with open("text.txt", 'r') as file:
-	sst = file.read()
-print(sst)
+a = None
+b = None
+a = float("30")
+b = float("50")
+while((a) != (b)):
+	if((a) > (b)):
+		a -= b
+	else:
+		b += a
+print(a)
+print(b)

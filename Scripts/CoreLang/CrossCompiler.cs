@@ -50,7 +50,7 @@ public static class CrossCompiler
         if (python != null)
         {
             UnityEngine.Debug.Log("Python already present");
-            return;
+            python.Kill();
         }
         File.WriteAllText(Application.dataPath + "/program.py", ccompiledString);
         python = new Process();
@@ -92,6 +92,7 @@ public static class CrossCompiler
     }
     public static void StartCrossCompile()
     {
+        ProgramOutput.instance.Write("[Run started]");
         ccompiledString = string.Empty;
         foreach(var v in varNodes)
         {

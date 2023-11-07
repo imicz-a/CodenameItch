@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
 
 public class NodeDragManager : MonoBehaviour
@@ -29,6 +28,11 @@ public class NodeDragManager : MonoBehaviour
         {
             Debug.Log("dragging");
             current.position = Input.mousePosition;
+            if (Input.GetKeyDown(KeyCode.Backspace) || Input.GetKeyDown(KeyCode.Delete))
+            {
+                if(current.gameObject != CrossCompiler.entryPoint.gameObject)
+                    Destroy(current.gameObject);
+            }
         }
     }
     public void onPutDown(DraggableObject o)
@@ -54,18 +58,36 @@ public class NodeDragManager : MonoBehaviour
             return;
         }
         bool wasInserted = false;
+        if(overlappingNode is ContainerNode)
+        {
+            display.currentContainer = overlappingNode as ContainerNode;
+        }
+        else if(overlappingNode.currentContainer != null)
+        {
+            display.currentContainer = overlappingNode.currentContainer;
+        }
+
         if (overlappingNode.nextNode != null)
         {
-            overlappingNode.nextNode.previousNode = display;
-            display.nextNode = overlappingNode.nextNode;
-            wasInserted = true;
+            if (display is ContainerNode)
+            {
+                overlappingNode.nextNode.previousNode = (display as ContainerNode).end;
+                (display as ContainerNode).end.nextNode = overlappingNode.nextNode;
+                wasInserted = true;
+            }
+            else
+            {
+                overlappingNode.nextNode.previousNode = display;
+                display.nextNode = overlappingNode.nextNode;
+                wasInserted = true;
+            }
         }
         display.previousNode = overlappingNode;
         overlappingNode.nextNode = display;
         SnapNodes(overlappingNode, display);
         if (wasInserted)
         {
-            SnapNodes(display, display.nextNode);
+            display.ReSnap();
         }
     }
     public void onPutDown(VariableNode v)

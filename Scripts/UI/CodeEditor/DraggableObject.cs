@@ -18,10 +18,9 @@ public class DraggableObject : MonoBehaviour, IDragHandler, IBeginDragHandler, I
             (transform as RectTransform).anchorMax = Vector2.zero;
             (transform as RectTransform).anchorMin = Vector2.zero;
             isClonable = false;
-            transform.SetParent(NodeDragManager.nodeParent, false);
-            NodeDragManager.instance.current = transform;
-            return;
         }
+        transform.SetParent(NodeDragManager.nodeParent, false);
+        transform.SetAsLastSibling();
         NodeDragManager.instance.current = transform;
     }
 
