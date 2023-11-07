@@ -15,6 +15,7 @@ public class NodeDragManager : MonoBehaviour
         set { instance._nodeSpawnerParent = value; }
     }
     public Transform _nodeSpawnerParent;
+    public RectTransform canvas;
     private void Awake()
     {
         instance = this;
@@ -229,9 +230,10 @@ public class NodeDragManager : MonoBehaviour
     Vector2 localPointerPos;
     void SetPointer()
     {
-        Vector2 guiScale = getUIScale();
-        Vector2 debog = Input.mousePosition * guiScale;
-        tempPointerChecker.anchoredPosition = debog;
+        //Vector2 guiScale = getUIScale();
+        //Vector2 debog;
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, Input.mousePosition, Camera.main, out debog);
+        tempPointerChecker.position = Input.mousePosition;
         tempPointerChecker.SetParent(_nodeParent);
         localPointerPos = tempPointerChecker.anchoredPosition;
         tempPointerChecker.SetParent(currentCanvas);
